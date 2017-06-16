@@ -30,21 +30,15 @@ coreshop.taxrulegroup.item = Class.create(coreshop.resource.item, {
             {
                 name: 'name',
                 fieldLabel: t('name'),
-                width: 400,
                 value: data.name
             },
             {
                 xtype: 'checkbox',
                 name: 'active',
                 fieldLabel: t('active'),
-                width: 250,
                 checked: data.active
             }
         ];
-
-        if (this.getMultishopSettings()) {
-            items.push(this.getMultishopSettings());
-        }
 
         this.formPanel = new Ext.form.Panel({
             bodyStyle: 'padding:20px 5px 20px 5px;',
@@ -68,7 +62,7 @@ coreshop.taxrulegroup.item = Class.create(coreshop.resource.item, {
                     autoHeight: true,
                     labelWidth: 350,
                     defaultType: 'textfield',
-                    defaults: {width: '100%'},
+                    defaults: {width: 400},
                     items: items
                 },
                 this.getGrid()
@@ -86,7 +80,7 @@ coreshop.taxrulegroup.item = Class.create(coreshop.resource.item, {
         if (!Ext.ClassManager.get(modelName)) {
             Ext.define(modelName, {
                     extend: 'Ext.data.Model',
-                    fields: ['id', 'taxRuleGroup', 'country', 'tax', 'behavior']
+                    fields: ['id', 'taxRuleGroup', 'tax', 'behavior']
                 }
             );
         }
@@ -99,95 +93,9 @@ coreshop.taxrulegroup.item = Class.create(coreshop.resource.item, {
             data: this.data.taxRules
         });
 
-        var statesStore = new Ext.data.Store({
-            restful: false,
-            proxy: new Ext.data.HttpProxy({
-                url: '/admin/coreshop/state/country'
-            }),
-            reader: new Ext.data.JsonReader({}, [
-                {name: 'id'},
-                {name: 'name'}
-            ]),
-            listeners: {
-                load: function (store) {
-                    var rec = {id: 0, name: t('coreshop_all')};
-                    store.insert(0, rec);
-
-                    this.grid.getView().refresh()
-                }.bind(this)
-            }
-        });
-
-        var stateEditor = new Ext.form.ComboBox({
-            store: statesStore,
-            valueField: 'id',
-            displayField: 'name',
-            queryMode: 'local',
-            disabled: true
-        });
-
-        var countryStore = new Ext.data.Store({
-            restful: false,
-            proxy: new Ext.data.HttpProxy({
-                url: '/admin/coreshop/countries/list'
-            }),
-            autoLoad: true,
-            reader: new Ext.data.JsonReader({}, [
-                {name: 'id'},
-                {name: 'text'}
-            ]),
-            listeners: {
-                load: function (store) {
-                    var rec = {id: 0, name: t('coreshop_all')};
-                    store.insert(0, rec);
-
-                    this.grid.getView().refresh()
-                }.bind(this)
-            }
-        });
-        countryStore.load();
-
-        var countryEditor = new Ext.form.ComboBox({
-            store: countryStore,
-            valueField: 'id',
-            displayField: 'name',
-            queryMode: 'local',
-            disabled: false
-        });
-
         var gridColumns = [
             {
-                header: t('coreshop_tax_rule_country'),
-                width: 200,
-                dataIndex: 'country',
-                editor: countryEditor,
-                renderer: function (country) {
-                    var store = countryStore;
-                    var pos = store.findExact('id', country);
-                    if (pos >= 0) {
-                        return store.getAt(pos).get('name');
-                    }
-
-                    return t('coreshop_all');
-                }
-            },
-            {
-                header: t('coreshop_tax_rule_state'),
-                width: 200,
-                dataIndex: 'state',
-                editor: stateEditor,
-                renderer: function (state) {
-                    var store = statesStore;
-                    var pos = store.findExact('id', state);
-                    if (pos >= 0) {
-                        return store.getAt(pos).get('name');
-                    }
-
-                    return t('coreshop_all');
-                }
-            },
-            {
-                header: t('coreshop_tax_rule_tax'),
+                header: t('coreshop_tax'),
                 width: 200,
                 dataIndex: 'taxRate',
                 editor: new Ext.form.ComboBox({
@@ -246,18 +154,7 @@ coreshop.taxrulegroup.item = Class.create(coreshop.resource.item, {
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1,
             listeners: {
-                beforeedit: function (editor, context) {
-                    if (context.record) {
-                        if (context.record.get('country')) {
-                            stateEditor.enable();
-                            /*stateEditor.getStore().load({
-                             params : {
-                             country : context.record.get('country')
-                             }
-                             });*/
-                        }
-                    }
-                }
+
             }
         });
 
@@ -281,7 +178,6 @@ coreshop.taxrulegroup.item = Class.create(coreshop.resource.item, {
                         this.store.add({
                             id: null,
                             taxRuleGroup: this.data.id,
-                            country: null,
                             tax: null,
                             behavior: 0
                         });
@@ -308,14 +204,6 @@ coreshop.taxrulegroup.item = Class.create(coreshop.resource.item, {
 
             if (range.phantom) {
                 delete data['id'];
-            }
-
-            if (data.state === 0) {
-                delete data.state;
-            }
-
-            if (data.country === 0) {
-                delete data.country;
             }
 
             taxRules.push(data);

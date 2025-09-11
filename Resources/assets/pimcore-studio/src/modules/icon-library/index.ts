@@ -15,7 +15,7 @@ import { serviceIds } from '@pimcore/studio-ui-bundle/app'
 import { type IconLibrary } from '@pimcore/studio-ui-bundle/modules/icon-library'
 
 // @ts-ignore
-import taxesIcon from '../assets/taxes.svg?react'
+import taxesIcon from '../../assets/taxes.svg?react'
 
 export const TaxationBundleIconModule: AbstractModule = {
   onInit(): void {

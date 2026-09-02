@@ -20,8 +20,8 @@
       "api": ""
     },
     "globalName": "coreshoptaxation",
-    "pluginVersion": "2.8.0",
-    "publicPath": "/bundles/coreshoptaxation/studio/4be1caa326f761fa6f0c7c3aed7a3b59/"
+    "pluginVersion": "2.9.0",
+    "publicPath": "/bundles/coreshoptaxation/studio/ec80d2b058629560fc3bdf333d3c0645/"
   },
   "shared": [
     {
